@@ -9,7 +9,7 @@ namespace N64.F3D.Commands
 {
     public abstract class Base
     {
-        protected ulong Data = 0;
+        internal ulong Data = 0;
 
         private static BitFieldAccessor64 CommandAccessor = new BitFieldAccessor64(56, 8);
         public Command Command
@@ -20,11 +20,6 @@ namespace N64.F3D.Commands
 
         protected Base(Command command) { Command = command; }
         protected Base(ulong raw) { Data = raw; }
-
-        public void WriteTo(Stream stream)
-        {
-            stream.WriteBE(Data);
-        }
     }
 
     

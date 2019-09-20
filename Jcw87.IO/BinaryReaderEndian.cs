@@ -8,7 +8,7 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace N64
+namespace Jcw87.IO
 {
     public class BinaryReaderEndian : BinaryReader
     {

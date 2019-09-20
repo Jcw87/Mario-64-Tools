@@ -9,13 +9,7 @@ namespace N64.F3D
 {
     public class DisplayList : List<Commands.Base>
     {
-        private class EndDl : Commands.Base { public EndDl() : base(Command.EndDl) { } }
-        private static EndDl End = new EndDl();
-
-        public void WriteTo(Stream stream)
-        {
-            foreach (var command in this) command.WriteTo(stream);
-            End.WriteTo(stream);
-        }
+        public class EndDl : Commands.Base { public EndDl() : base(Command.EndDl) { } }
+        public readonly static EndDl End = new EndDl();
     }
 }

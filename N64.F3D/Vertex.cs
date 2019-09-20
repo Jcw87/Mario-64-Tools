@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Jcw87.IO;
+
 namespace N64.F3D
 {
     public struct Vertex
@@ -16,12 +18,12 @@ namespace N64.F3D
 
         public void WriteTo(Stream stream)
         {
-            Position.WriteTo(stream);
+            stream.WriteBE(Position);
             stream.WriteByte(0);
             stream.WriteByte(0);
             stream.WriteBE(U);
             stream.WriteBE(V);
-            Color.WriteRGBA8888To(stream);
+            stream.WriteBE(Color.ToRgba8888());
         }
     }
 }

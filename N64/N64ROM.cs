@@ -6,9 +6,11 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
+using Jcw87.IO;
+
 namespace N64
 {
-    public class N64ROM : IDisposable
+    public class N64ROM
     {
         private static byte[] header_bigendian = new byte[] { 0x80, 0x37, 0x12, 0x40 };
         private static byte[] header_smallendian = new byte[] { 0x40, 0x12, 0x37, 0x80 };
@@ -87,13 +89,10 @@ namespace N64
 
         protected byte[] bytes;
         private CIC cic;
-        //public Stream Stream { get; private set; }
-        //public BinaryReader Reader { get; private set; }
-        //public BinaryWriter Writer { get; private set; }
 
         public string FilePath { get; private set; }
         public int Length => bytes.Length;
-        public uint BaseVirtualAddress => ReadUInt32(0x08) - CIC_offsets[(byte)cic];
+        public uint BaseVirtualAddress => bytes.ReadUInt32BE(0x08) - CIC_offsets[(byte)cic];
         public string InternalName
         {
             // Offset: 0x20, Length: 20
@@ -160,102 +159,8 @@ namespace N64
                     Console.WriteLine("WARNING! Unknown ROM bootcode");
                 }
             }
-
-            //Stream = new MemoryStream(bytes, true);
-            //Reader = new BinaryReaderEndian(Stream, Encoding.ASCII, true) { BigEndian = true };
-            //Writer = new BinaryWriterEndian(Stream, Encoding.ASCII, true) { BigEndian = true };
-        }
-
-        public void Dispose()
-        {
-            //Writer.Dispose();
-            //Reader.Dispose();
-            //Stream.Dispose();
         }
 
         public UInt32 VAddressToROMOffset(UInt32 VAddress) => VAddress - BaseVirtualAddress + 0x1000;
-
-        public byte ReadByte(int offset) { return bytes[offset]; }
-
-        public byte[] ReadBytes(int offset, int size)
-        {
-            var data = new byte[size];
-            Array.Copy(bytes, offset, data, 0, size);
-            return data;
-        }
-
-        public Int16 ReadInt16(int offset)
-        {
-            var data = ReadBytes(offset, 2);
-            if (BitConverter.IsLittleEndian) Array.Reverse(data);
-            return BitConverter.ToInt16(data, 0);
-        }
-
-        public UInt16 ReadUInt16(int offset)
-        {
-            var data = ReadBytes(offset, 2);
-            if (BitConverter.IsLittleEndian) Array.Reverse(data);
-            return BitConverter.ToUInt16(data, 0);
-        }
-
-        public Int32 ReadInt32(int offset)
-        {
-            var data = ReadBytes(offset, 4);
-            if (BitConverter.IsLittleEndian) Array.Reverse(data);
-            return BitConverter.ToInt32(data, 0);
-        }
-
-        public UInt32 ReadUInt32(int offset)
-        {
-            var data = ReadBytes(offset, 4);
-            if (BitConverter.IsLittleEndian) Array.Reverse(data);
-            return BitConverter.ToUInt32(data, 0);
-        }
-
-        public Single ReadSingle(int offset)
-        {
-            var data = ReadBytes(offset, 4);
-            if (BitConverter.IsLittleEndian) Array.Reverse(data);
-            return BitConverter.ToSingle(data, 0);
-        }
-
-        public void WriteByte(int offset, byte data) { bytes[offset] = data; }
-
-        public void WriteBytes(int offset, byte[] data) { Array.Copy(data, 0, bytes, offset, data.Length); }
-
-        public void WriteInt16(int offset, Int16 value)
-        {
-            var data = BitConverter.GetBytes(value);
-            if (BitConverter.IsLittleEndian) data.Reverse();
-            WriteBytes(offset, data);
-        }
-
-        public void WriteUInt16(int offset, UInt16 value)
-        {
-            var data = BitConverter.GetBytes(value);
-            if (BitConverter.IsLittleEndian) Array.Reverse(data);
-            WriteBytes(offset, data);
-        }
-
-        public void WriteInt32(int offset, Int32 value)
-        {
-            var data = BitConverter.GetBytes(value);
-            if (BitConverter.IsLittleEndian) Array.Reverse(data);
-            WriteBytes(offset, data);
-        }
-
-        public void WriteUInt32(int offset, UInt32 value)
-        {
-            var data = BitConverter.GetBytes(value);
-            if (BitConverter.IsLittleEndian) Array.Reverse(data);
-            WriteBytes(offset, data);
-        }
-
-        public void WriteSingle(int offset, Single value)
-        {
-            var data = BitConverter.GetBytes(value);
-            if (BitConverter.IsLittleEndian) Array.Reverse(data);
-            WriteBytes(offset, data);
-        }
     }
 }

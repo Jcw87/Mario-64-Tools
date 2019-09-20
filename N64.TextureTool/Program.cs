@@ -14,8 +14,6 @@ namespace N64.TextureTool
         [STAThread]
         static void Main()
         {
-            N64TextureConverter.Convert(@"D:\Pictures\animated_bup.gif", "out.bin");
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
