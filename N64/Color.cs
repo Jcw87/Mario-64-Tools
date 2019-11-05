@@ -75,7 +75,7 @@ namespace N64
             var g = (encoded >> 6) & 0x1F;
             var b = (encoded >> 1) & 0x1F;
             var a = (encoded) & 0x01;
-            return new Color((byte)(r << 3 | r >> 2), (byte)(g << 3 | g >> 2), (byte)(b << 3 | b >> 2), (byte)(a > 0 ? 0xFF : 0x00));
+            return new Color((byte)(r << 3 | r >> 2), (byte)(g << 3 | g >> 2), (byte)(b << 3 | b >> 2), (byte)(a * 0xFF));
         }
 
         public static Color FromIA88(ushort encoded)
@@ -89,8 +89,8 @@ namespace N64
         {
             var i = (encoded >> 4) & 0x0F;
             var a = encoded & 0x0F;
-            var i2 = (byte)(i << 4 | i);
-            var a2 = (byte)(a << 4 | a);
+            var i2 = (byte)(i * 0x11);
+            var a2 = (byte)(a * 0x11);
             return new Color(i2, i2, i2, a2);
         }
 
@@ -99,7 +99,7 @@ namespace N64
             var i = (encoded >> 1) & 0x07;
             var a = encoded & 0x01;
             var i2 = (byte)(i << 5 | i << 2 | i >> 1);
-            var a2 = (byte)(a > 0 ? 0xFF : 0x00);
+            var a2 = (byte)(a * 0xFF);
             return new Color(i2, i2, i2, a2);
         }
 
@@ -110,7 +110,7 @@ namespace N64
 
         public static Color FromI4(byte encoded)
         {
-            var i = (byte)((encoded << 4) | encoded);
+            var i = (byte)(encoded * 0x11);
             return new Color(i, i, i, 0xFF);
         }
     }

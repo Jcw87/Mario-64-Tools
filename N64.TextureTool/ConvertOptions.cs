@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace N64.TextureTool
 {
-    public class ConvertOptions
+    public class ConvertOptions : ICloneable
     {
         public enum Output
         {
-            Obj,
             RawImage,
+            ModelObj,
             EndCake,
         }
 
@@ -27,5 +28,7 @@ namespace N64.TextureTool
         public int TileHeight { get; set; }
 
         public string OutputFolder { get; set; }
+
+        public object Clone() => MemberwiseClone();
     }
 }

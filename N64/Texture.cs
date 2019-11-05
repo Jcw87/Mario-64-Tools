@@ -25,7 +25,6 @@ namespace N64
         public TextureFormat Format { get; }
         public int BitsPerPixel { get; }
         public byte[] Pixels { get; }
-        private Stream PixelStream { get; set; }
 
         public Texture(int width, int height, TextureFormat format)
         {
@@ -45,7 +44,11 @@ namespace N64
             }
             var size = Width * Height * BitsPerPixel / 8;
             Pixels = new byte[size];
-            PixelStream = new MemoryStream(Pixels);
+        }
+
+        private byte GetPixel4(int index, bool even)
+        {
+            return (byte)(even ? Pixels[index] >> 4 : Pixels[index] & 0x0F);
         }
 
         public Color GetPixel(int x, int y)
@@ -53,33 +56,30 @@ namespace N64
             if (x < 0 || x >= Width) throw new ArgumentException("Invalid range", "x");
             if (y < 0 || y >= Height) throw new ArgumentException("Invalid range", "y");
             var pixelnum = (y * Width + x);
-            var index = pixelnum * (BitsPerPixel / 8);
-            PixelStream.Position = index;
+            var index = pixelnum * BitsPerPixel / 8;
             switch (Format)
             {
                 case TextureFormat.RGBA8888:
-                    return Color.FromRgba8888(PixelStream.ReadUInt32BE());
+                    return Color.FromRgba8888(Pixels.ReadUInt32BE(index));
                 case TextureFormat.RGBA5551:
-                    return Color.FromRgba5551(PixelStream.ReadUInt16BE());
+                    return Color.FromRgba5551(Pixels.ReadUInt16BE(index));
                 case TextureFormat.IA88:
-                    return Color.FromIA88(PixelStream.ReadUInt16BE());
+                    return Color.FromIA88(Pixels.ReadUInt16BE(index));
                 case TextureFormat.IA44:
                     return Color.FromIA44(Pixels[index]);
                 case TextureFormat.I8:
                     return Color.FromI8(Pixels[index]);
                 case TextureFormat.IA31:
-                    var encoded = (byte)(pixelnum % 2 == 0 ? Pixels[index] & 0x0F : Pixels[index] >> 4);
-                    return Color.FromIA31(encoded);
+                    return Color.FromIA31(GetPixel4(index, pixelnum % 2 == 0));
                 case TextureFormat.I4:
-                    encoded = (byte)(pixelnum % 2 == 0 ? Pixels[index] & 0x0F : Pixels[index] >> 4);
-                    return Color.FromI4(encoded);
+                    return Color.FromI4(GetPixel4(index, pixelnum % 2 == 0));
                 default: throw new NotImplementedException();
             }
         }
 
         private void SetPixel4(int index, bool even, byte c)
         {
-            Pixels[index] = (byte)(even ? (Pixels[index] & 0xF0) | c : (Pixels[index] & 0x0F) | (c << 4));
+            Pixels[index] = (byte)(even ? (Pixels[index] & 0x0F) | (c << 4) : (Pixels[index] & 0xF0) | c);
         }
 
         public void SetPixel(int x, int y, Color color)
@@ -87,13 +87,12 @@ namespace N64
             if (x < 0 || x >= Width) throw new ArgumentException("Invalid range", "x");
             if (y < 0 || y >= Height) throw new ArgumentException("Invalid range", "y");
             var pixelnum = (y * Width + x);
-            var index = pixelnum * (BitsPerPixel / 8);
-            PixelStream.Position = index;
+            var index = pixelnum * BitsPerPixel / 8;
             switch (Format)
             {
-                case TextureFormat.RGBA8888: PixelStream.WriteBE(color.ToRgba8888()); break;
-                case TextureFormat.RGBA5551: PixelStream.WriteBE(color.ToRgba5551()); break;
-                case TextureFormat.IA88: PixelStream.WriteBE(color.ToIA88()); break;
+                case TextureFormat.RGBA8888: Pixels.WriteBE(index, color.ToRgba8888()); break;
+                case TextureFormat.RGBA5551: Pixels.WriteBE(index, color.ToRgba5551()); break;
+                case TextureFormat.IA88: Pixels.WriteBE(index, color.ToIA88()); break;
                 case TextureFormat.IA44: Pixels[index] = color.ToIA44(); break;
                 case TextureFormat.I8: Pixels[index] = color.ToI8(); break;
                 case TextureFormat.IA31: SetPixel4(index, pixelnum % 2 == 0, color.ToIA31()); break;

@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace N64
 {
@@ -35,6 +30,8 @@ namespace N64
         public static Vector3s Min(in Vector3s a, in Vector3s b) => new Vector3s(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y), Math.Min(a.Z, b.Z));
         public static Vector3s Max(in Vector3s a, in Vector3s b) => new Vector3s(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y), Math.Max(a.Z, b.Z));
         public static Vector3s Clamp(in Vector3s v, in Vector3s min, in Vector3s max) => Max(Min(v, max), min);
+        public static int Dot(in Vector3s a, in Vector3s b) => a.X * b.X + a.Y * b.Y + a.Z * b.Z;
+        public static Vector3i Cross(in Vector3s a, in Vector3s b) => new Vector3i(a.Y * b.Z - a.Z * b.Y, a.Z * b.X - a.X * b.Z, a.X * b.Y - a.Y * b.X);
 
         public static void Add(in Vector3s a, in Vector3s b, out Vector3s result) { result = new Vector3s(a.X + b.X, a.Y + b.Y, a.Z + b.Z); }
         public static void Subtract(in Vector3s a, in Vector3s b, out Vector3s result) { result = new Vector3s(a.X - b.X, a.Y - b.Y, a.Z - b.Z); }
@@ -45,6 +42,8 @@ namespace N64
         public static void Min(in Vector3s a, in Vector3s b, out Vector3s result) { result = new Vector3s(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y), Math.Min(a.Z, b.Z)); }
         public static void Max(in Vector3s a, in Vector3s b, out Vector3s result) { result = new Vector3s(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y), Math.Max(a.Z, b.Z)); }
         public static void Clamp(in Vector3s v, in Vector3s min, in Vector3s max, out Vector3s result) { Min(v, max, out result); Max(v, min, out result); }
+        public static void Dot(in Vector3s a, in Vector3s b, out int result) { result = a.X * b.X + a.Y * b.Y + a.Z * b.Z; }
+        public static void Cross(in Vector3s a, in Vector3s b, out Vector3i result) { result = new Vector3i(a.Y * b.Z - a.Z * b.Y, a.Z * b.X - a.X * b.Z, a.X * b.Y - a.Y * b.X); }
 
         public static Vector3s operator +(in Vector3s a, in Vector3s b) => new Vector3s(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
         public static Vector3s operator -(in Vector3s a, in Vector3s b) => new Vector3s(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
@@ -56,6 +55,13 @@ namespace N64
         public static Vector3s operator /(Vector3s v, short s) => new Vector3s(v.X / s, v.Y / s, v.Z / s);
         public static bool operator ==(Vector3s a, Vector3s b) => a.Equals(b);
         public static bool operator !=(Vector3s a, Vector3s b) => !a.Equals(b);
+
+        public Vector2s Xy => new Vector2s(X, Y);
+        public Vector2s Xz => new Vector2s(X, Z);
+        public Vector2s Yx => new Vector2s(Y, X);
+        public Vector2s Yz => new Vector2s(Y, Z);
+        public Vector2s Zx => new Vector2s(Z, X);
+        public Vector2s Zy => new Vector2s(Z, Y);
 
         public short this[int idx]
         {
@@ -75,10 +81,7 @@ namespace N64
 
         public bool Equals(Vector3s other)
         {
-            if (X != other.X) return false;
-            if (Y != other.Y) return false;
-            if (Z != other.Z) return false;
-            return true;
+            return X.Equals(other.X) && Y.Equals(other.Y) && Z.Equals(other.Z);
         }
 
         public override bool Equals(object obj)
@@ -86,5 +89,7 @@ namespace N64
             if (obj is Vector3s) return Equals((Vector3s)obj);
             return false;
         }
+
+        public Vector3 ToVector3() => new Vector3(X, Y, Z);
     }
 }

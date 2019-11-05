@@ -15,7 +15,7 @@ namespace N64.TextureTool
         public int TextureWidth => NextPowerOf2(ImageWidth);
         public int TextureHeight => NextPowerOf2(ImageHeight);
 
-        private int NextPowerOf2(int input)
+        public static int NextPowerOf2(int input)
         {
             return 1 << (int)Math.Ceiling(Math.Log(input, 2));
         }

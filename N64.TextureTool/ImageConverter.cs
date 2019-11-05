@@ -81,7 +81,7 @@ namespace N64.TextureTool
 
         private static Vertex[][][] GenerateVertices(ConvertOptions options)
         {
-            if (options.OutputType != ConvertOptions.Output.Obj && options.OutputType != ConvertOptions.Output.EndCake) return null;
+            if (options.OutputType != ConvertOptions.Output.ModelObj && options.OutputType != ConvertOptions.Output.EndCake) return null;
 
             var xcount = (options.ImageWidth.Value + options.TileWidth - 1) / options.TileWidth;
             var ycount = (options.ImageHeight.Value + options.TileHeight - 1) / options.TileHeight;
@@ -310,7 +310,7 @@ namespace N64.TextureTool
             var imagedata = SplitImage(decoder.Frames, options);
             var tiles = GenerateTiles(options);
 
-            if (options.OutputType == ConvertOptions.Output.Obj)
+            if (options.OutputType == ConvertOptions.Output.ModelObj)
             {
                 WriteObj(tiles, imagedata, options);
                 return;
