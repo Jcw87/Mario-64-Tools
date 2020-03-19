@@ -25,16 +25,13 @@ namespace N64.TextureTool
             var srcbytes = new byte[size];
             converted.CopyPixels(srcbytes, src.PixelWidth * bytesperpixel, 0);
 
-            using (var stream = new MemoryStream(texture.Pixels))
+            for (var y = 0; y < texture.Height; y++)
             {
-                for (var y = 0; y < texture.Height; y++)
+                for (var x = 0; x < texture.Width; x++)
                 {
-                    for (var x = 0; x < texture.Width; x++)
-                    {
-                        var i = y * texture.Width + x;
-                        var color = new Color(srcbytes[i * 4 + 2], srcbytes[i * 4 + 1], srcbytes[i * 4 + 0], srcbytes[i * 4 + 3]);
-                        texture.SetPixel(x, y, color);
-                    }
+                    var i = y * texture.Width + x;
+                    var color = new Color(srcbytes[i * 4 + 2], srcbytes[i * 4 + 1], srcbytes[i * 4 + 0], srcbytes[i * 4 + 3]);
+                    texture.SetPixel(x, y, color);
                 }
             }
 
